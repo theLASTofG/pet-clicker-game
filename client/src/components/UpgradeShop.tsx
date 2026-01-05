@@ -30,8 +30,8 @@ export default function UpgradeShop() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {UPGRADES.map((upgrade, index) => {
-          const currentLevel = gameState.upgrades.find(u => u.id === upgrade.id)?.level || 0;
+      {UPGRADES && UPGRADES.map((upgrade, index) => {
+        const currentLevel = gameState.upgrades?.find(u => u.id === upgrade.id)?.level || 0;
           const nextCost = upgrade.cost * (currentLevel + 1);
           const canAfford = gameState.coins >= nextCost && currentLevel < upgrade.maxLevel;
           const isMaxed = currentLevel >= upgrade.maxLevel;

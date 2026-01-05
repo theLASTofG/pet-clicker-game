@@ -27,11 +27,14 @@ const STORAGE_KEY = 'pet-clicker-save';
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(() => {
-    // Load saved game state from localStorage
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (!parsed.upgrades) parsed.upgrades = INITIAL_GAME_STATE.upgrades;
+        if (!parsed.classChances) parsed.classChances = INITIAL_GAME_STATE.classChances;
+        if (!parsed.missions) parsed.missions = INITIAL_GAME_STATE.missions;
+        return parsed;
       } catch {
         return INITIAL_GAME_STATE;
       }

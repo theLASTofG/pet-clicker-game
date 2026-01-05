@@ -11,8 +11,10 @@ export default function RebirthAscensionShop() {
   const { gameState, spendCoins, addCoins } = useGame();
   const [selectedTab, setSelectedTab] = useState<'rebirth' | 'ascension'>('rebirth');
 
-  const rebirthCost = 50000 * (gameState.totalRebirths + 1);
-  const ascensionCost = 100000 * (gameState.totalAscensions + 1);
+  const totalRebirths = gameState.totalRebirths ?? 0;
+  const totalAscensions = gameState.totalAscensions ?? 0;
+  const rebirthCost = 50000 * Math.max(1, totalRebirths + 1);
+  const ascensionCost = 100000 * Math.max(1, totalAscensions + 1);
 
   const handleRebirth = () => {
     if (gameState.coins < rebirthCost) {
@@ -110,7 +112,7 @@ export default function RebirthAscensionShop() {
                 <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                   <span className="text-muted-foreground">Total de Rebirths:</span>
                   <span className="text-2xl font-bold text-[oklch(0.7_0.2_195)]">
-                    {gameState.totalRebirths}
+                    {totalRebirths}
                   </span>
                 </div>
 
@@ -170,7 +172,7 @@ export default function RebirthAscensionShop() {
                 <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                   <span className="text-muted-foreground">Total de Ascensões:</span>
                   <span className="text-2xl font-bold text-[oklch(0.75_0.2_145)]">
-                    {gameState.totalAscensions}
+                    {totalAscensions}
                   </span>
                 </div>
 
