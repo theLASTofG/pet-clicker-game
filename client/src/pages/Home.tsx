@@ -9,6 +9,10 @@ import DevTools from '@/components/DevTools';
 import UpgradeShop from '@/components/UpgradeShop';
 import DailyMissions from '@/components/DailyMissions';
 import IdleCounter from '@/components/IdleCounter';
+import ClassChanceBooster from '@/components/ClassChanceBooster';
+import IncrementalGame from '@/components/IncrementalGame';
+import RebirthAscensionShop from '@/components/RebirthAscensionShop';
+import BestPetDisplay from '@/components/BestPetDisplay';
 import StatsDisplay from '@/components/StatsDisplay';
 import { Button } from '@/components/ui/button';
 import { EGGS } from '@/data/gameData';
@@ -199,6 +203,35 @@ export default function Home() {
         >
           <UpgradeShop />
           <DailyMissions />
+        </motion.div>
+
+        {/* Best Pet Display */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <BestPetDisplay />
+        </motion.div>
+
+        {/* Advanced Features Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="grid lg:grid-cols-2 gap-8"
+        >
+          <ClassChanceBooster />
+          <IncrementalGame />
+        </motion.div>
+
+        {/* Rebirth and Ascension */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <RebirthAscensionShop />
         </motion.div>
 
         {/* Dev Tools */}

@@ -3,13 +3,39 @@
 
 export type Rarity = 'common' | 'rare' | 'epic' | 'legendary' | 'secret';
 
+export type PetClass = 
+  | 'normal'
+  | 'toxic'
+  | 'congelado'
+  | 'abençoado'
+  | 'flamejante'
+  | 'relâmpago'
+  | 'terrestre'
+  | 'aquático'
+  | 'aéreo'
+  | 'psíquico'
+  | 'sombrio'
+  | 'luminoso'
+  | 'metálico'
+  | 'cristalino'
+  | 'infernal'
+  | 'celestial'
+  | 'cósmico'
+  | 'vazio'
+  | 'temporal'
+  | 'dimensional';
+
 export interface Pet {
   id: string;
   name: string;
   rarity: Rarity;
+  class: PetClass;
   multiplier: number; // Multiplicador de ganho por clique
+  weight: number; // Peso do pet (afeta poder total)
   image: string;
   acquiredAt: number; // Timestamp
+  level: number; // Nível do pet (para ascensão)
+  ascensionLevel: number; // Nível de ascensão
 }
 
 export interface EggType {
@@ -24,7 +50,9 @@ export interface EggType {
 export interface PetTemplate {
   name: string;
   rarity: Rarity;
+  class: PetClass;
   multiplier: number;
+  weight: number;
   dropChance: number; // Probabilidade de 0 a 1
 }
 
@@ -42,6 +70,11 @@ export interface Upgrade {
 export interface UpgradeState {
   id: string;
   level: number;
+}
+
+export interface ClassChance {
+  class: PetClass;
+  chance: number; // Percentual de chance
 }
 
 export interface Mission {
@@ -67,6 +100,10 @@ export interface GameState {
   lastIdleTime: number; // Timestamp do último cálculo de idle
   autoClickerActive: boolean;
   globalMultiplier: number;
+  classChances: Record<PetClass, number>; // Chances de cada classe
+  totalRebirths: number; // Número de rebirths realizados
+  totalAscensions: number; // Número de ascensões realizadas
+  bestPetId?: string; // ID do melhor pet
 }
 
 export interface ClickEffect {

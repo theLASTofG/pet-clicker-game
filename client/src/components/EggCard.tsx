@@ -66,9 +66,13 @@ export default function EggCard({ egg, isLocked = false }: EggCardProps) {
           id: nanoid(),
           name: selectedPet.name,
           rarity: selectedPet.rarity,
+          class: selectedPet.class,
           multiplier: selectedPet.multiplier,
+          weight: selectedPet.weight,
           image: egg.image,
           acquiredAt: Date.now(),
+          level: 1,
+          ascensionLevel: 0,
         };
 
         addPet(pet);
