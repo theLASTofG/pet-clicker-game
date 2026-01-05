@@ -25,7 +25,7 @@ export default function PetInventory() {
 
   // Sort pets by rarity and multiplier
   const sortedPets = [...gameState.pets].sort((a, b) => {
-    const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
+    const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3, secret: 4 };
     const rarityDiff = rarityOrder[b.rarity] - rarityOrder[a.rarity];
     if (rarityDiff !== 0) return rarityDiff;
     return b.multiplier - a.multiplier;

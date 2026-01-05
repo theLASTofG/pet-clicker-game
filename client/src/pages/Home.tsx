@@ -6,6 +6,9 @@ import EggCard from '@/components/EggCard';
 import PetInventory from '@/components/PetInventory';
 import ProgressTracker from '@/components/ProgressTracker';
 import DevTools from '@/components/DevTools';
+import UpgradeShop from '@/components/UpgradeShop';
+import DailyMissions from '@/components/DailyMissions';
+import IdleCounter from '@/components/IdleCounter';
 import StatsDisplay from '@/components/StatsDisplay';
 import { Button } from '@/components/ui/button';
 import { EGGS } from '@/data/gameData';
@@ -183,6 +186,20 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
+
+        {/* Idle Counter */}
+        <IdleCounter />
+
+        {/* Upgrades and Missions Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="grid lg:grid-cols-2 gap-8"
+        >
+          <UpgradeShop />
+          <DailyMissions />
+        </motion.div>
 
         {/* Dev Tools */}
         <DevTools />

@@ -2,7 +2,7 @@
 // Centralized game state management with localStorage persistence
 
 import { INITIAL_GAME_STATE } from '@/data/gameData';
-import { GameState, Pet } from '@/types/game';
+import { GameState, Pet, Mission } from '@/types/game';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface GameContextType {
@@ -14,6 +14,11 @@ interface GameContextType {
   calculateClickPower: () => number;
   unlockEgg: (eggId: string) => void;
   resetGame: () => void;
+  upgradeLevel: (upgradeId: string) => boolean;
+  updateMission: (missionId: string, progress: number) => void;
+  completeMission: (missionId: string) => void;
+  processIdleGains: () => void;
+  setAutoClicker: (active: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -39,15 +44,46 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
   }, [gameState]);
 
-  // Calculate total click power based on pets
+  // Auto-clicker interval
+  useEffect(() => {
+    if (!gameState.autoClickerActive) return;
+
+    const autoClickerLevel = gameState.upgrades.find(u => u.id === 'auto-clicker')?.level || 0;
+    if (autoClickerLevel === 0) return;
+
+    const interval = setInterval(() => {
+      const clickPower = calculateClickPower();
+      addCoins(clickPower);
+      incrementClicks();
+    }, 2000 / autoClickerLevel);
+
+    return () => clearInterval(interval);
+  }, [gameState.autoClickerActive, gameState.upgrades, gameState.pets]);
+
+  // Idle gains interval
+  useEffect(() => {
+    const interval = setInterval(() => {
+      processIdleGains();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameState.pets, gameState.upgrades]);
+
+  // Calculate total click power based on pets and upgrades
   const calculateClickPower = () => {
     if (gameState.pets.length === 0) return 1;
     
-    const totalMultiplier = gameState.pets.reduce(
+    const petMultiplier = gameState.pets.reduce(
       (sum, pet) => sum + pet.multiplier,
       0
     );
-    return Math.floor(totalMultiplier);
+
+    const globalMultiplierUpgrade = gameState.upgrades.find(u => u.id === 'global-multiplier');
+    const globalMultiplier = globalMultiplierUpgrade 
+      ? 1 + (globalMultiplierUpgrade.level * 0.2)
+      : 1;
+
+    return Math.floor(petMultiplier * globalMultiplier);
   };
 
   const addCoins = (amount: number) => {
@@ -92,6 +128,78 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const upgradeLevel = (upgradeId: string): boolean => {
+    const upgrade = gameState.upgrades.find(u => u.id === upgradeId);
+    if (!upgrade) return false;
+
+    // Find upgrade cost from UPGRADES data
+    const { UPGRADES } = require('@/data/gameData');
+    const upgradeData = UPGRADES.find((u: any) => u.id === upgradeId);
+    if (!upgradeData) return false;
+
+    const cost = upgradeData.cost * (upgrade.level + 1);
+    
+    if (gameState.coins < cost || upgrade.level >= upgradeData.maxLevel) {
+      return false;
+    }
+
+    setGameState(prev => ({
+      ...prev,
+      coins: prev.coins - cost,
+      upgrades: prev.upgrades.map(u =>
+        u.id === upgradeId ? { ...u, level: u.level + 1 } : u
+      ),
+    }));
+
+    if (upgradeId === 'auto-clicker') {
+      setGameState(prev => ({ ...prev, autoClickerActive: true }));
+    }
+
+    return true;
+  };
+
+  const updateMission = (missionId: string, progress: number) => {
+    setGameState(prev => ({
+      ...prev,
+      missions: prev.missions.map(m =>
+        m.id === missionId
+          ? { ...m, current: Math.min(m.current + progress, m.target) }
+          : m
+      ),
+    }));
+  };
+
+  const completeMission = (missionId: string) => {
+    setGameState(prev => ({
+      ...prev,
+      coins: prev.coins + (prev.missions.find(m => m.id === missionId)?.reward || 0),
+      missions: prev.missions.map(m =>
+        m.id === missionId
+          ? { ...m, completed: true, completedAt: Date.now() }
+          : m
+      ),
+    }));
+  };
+
+  const processIdleGains = () => {
+    const passiveIncomeUpgrade = gameState.upgrades.find(u => u.id === 'passive-income');
+    if (!passiveIncomeUpgrade || passiveIncomeUpgrade.level === 0) return;
+
+    const clickPower = calculateClickPower();
+    const passiveGain = clickPower * (passiveIncomeUpgrade.level * 0.01);
+
+    if (passiveGain > 0) {
+      addCoins(passiveGain);
+    }
+  };
+
+  const setAutoClicker = (active: boolean) => {
+    setGameState(prev => ({
+      ...prev,
+      autoClickerActive: active,
+    }));
+  };
+
   const resetGame = () => {
     setGameState(INITIAL_GAME_STATE);
     localStorage.removeItem(STORAGE_KEY);
@@ -108,6 +216,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         calculateClickPower,
         unlockEgg,
         resetGame,
+        upgradeLevel,
+        updateMission,
+        completeMission,
+        processIdleGains,
+        setAutoClicker,
       }}
     >
       {children}
