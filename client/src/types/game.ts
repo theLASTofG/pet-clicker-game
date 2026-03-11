@@ -103,6 +103,8 @@ export interface GameState {
   classChances: Record<PetClass, number>; // Chances de cada classe
   totalRebirths: number; // Número de rebirths realizados
   totalAscensions: number; // Número de ascensões realizadas
+  rebirthMultiplier: number; // Multiplicador permanente de rebirth
+  ascensionMultiplier: number; // Multiplicador permanente de ascensão
   bestPetId?: string; // ID do melhor pet
 }
 

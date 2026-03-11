@@ -3,62 +3,66 @@
 
 import { useGame } from '@/contexts/GameContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, RefreshCw, Zap } from 'lucide-react';
+import { Crown, RefreshCw, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function RebirthAscensionShop() {
-  const { gameState, spendCoins, addCoins } = useGame();
+  const { gameState, performRebirth, performAscension } = useGame();
   const [selectedTab, setSelectedTab] = useState<'rebirth' | 'ascension'>('rebirth');
 
   const totalRebirths = gameState.totalRebirths ?? 0;
   const totalAscensions = gameState.totalAscensions ?? 0;
-  const rebirthCost = 50000 * Math.max(1, totalRebirths + 1);
-  const ascensionCost = 100000 * Math.max(1, totalAscensions + 1);
+  
+  // Rebirth logic: requires coins and pets
+  const rebirthCoinCost = 100000 * Math.pow(2, totalRebirths);
+  const rebirthPetRequirement = 10 + (totalRebirths * 5);
+  const canRebirth = gameState.coins >= rebirthCoinCost && gameState.pets.length >= rebirthPetRequirement;
+
+  // Ascension logic: requires rebirths and high coins
+  const ascensionCoinCost = 5000000 * Math.pow(10, totalAscensions);
+  const ascensionRebirthRequirement = 5 + (totalAscensions * 2);
+  const canAscend = gameState.coins >= ascensionCoinCost && totalRebirths >= ascensionRebirthRequirement;
 
   const handleRebirth = () => {
-    if (gameState.coins < rebirthCost) {
-      toast.error('Moedas insuficientes!');
+    if (!canRebirth) {
+      if (gameState.coins < rebirthCoinCost) toast.error('Moedas insuficientes!');
+      else toast.error(`Você precisa de pelo menos ${rebirthPetRequirement} pets!`);
       return;
     }
-
-    if (spendCoins(rebirthCost)) {
-      // Rebirth bonus: gain 10% of total power as permanent bonus
-      const totalPower = gameState.pets.reduce((sum, pet) => sum + pet.multiplier, 0);
-      const rebirthBonus = Math.floor(totalPower * 0.1);
-      
-      addCoins(rebirthBonus);
-      toast.success(
-        `🔄 Rebirth realizado! Você ganhou ${rebirthBonus} moedas de bônus!`
-      );
+    if (confirm('O Rebirth irá resetar suas moedas, pets e upgrades, mas dobrará seus ganhos permanentemente. Continuar?')) {
+      performRebirth();
     }
   };
 
   const handleAscension = () => {
-    if (gameState.coins < ascensionCost) {
-      toast.error('Moedas insuficientes!');
+    if (!canAscend) {
+      if (gameState.coins < ascensionCoinCost) toast.error('Moedas insuficientes!');
+      else toast.error(`Você precisa de pelo menos ${ascensionRebirthRequirement} Rebirths!`);
       return;
     }
-
-    if (spendCoins(ascensionCost)) {
-      // Ascension bonus: gain 25% of total power as permanent bonus
-      const totalPower = gameState.pets.reduce((sum, pet) => sum + pet.multiplier, 0);
-      const ascensionBonus = Math.floor(totalPower * 0.25);
-      
-      addCoins(ascensionBonus);
-      toast.success(
-        `👑 Ascensão realizada! Você ganhou ${ascensionBonus} moedas de bônus!`
-      );
+    if (confirm('A Ascensão irá resetar TUDO (incluindo Rebirths), mas dará um multiplicador de 5x global. Continuar?')) {
+      performAscension();
     }
   };
 
   return (
     <div className="glass-panel rounded-lg p-6 space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Crown className="w-6 h-6 text-[oklch(0.75_0.2_145)]" />
-        <h2 className="text-2xl font-bold font-[family-name:var(--font-heading)] tracking-wide">
-          Rebirth & Ascensão
-        </h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-6 h-6 text-[oklch(0.75_0.2_145)]" />
+          <h2 className="text-2xl font-bold font-[family-name:var(--font-heading)] tracking-wide">
+            Progressão Avançada
+          </h2>
+        </div>
+        <div className="flex gap-4 text-sm">
+          <span className="text-[oklch(0.7_0.2_195)] font-bold">
+            Multiplicador Rebirth: x{gameState.rebirthMultiplier || 1}
+          </span>
+          <span className="text-[oklch(0.75_0.2_145)] font-bold">
+            Multiplicador Ascensão: x{gameState.ascensionMultiplier || 1}
+          </span>
+        </div>
       </div>
 
       {/* Tab selector */}
@@ -103,47 +107,45 @@ export default function RebirthAscensionShop() {
                 <div>
                   <h3 className="text-xl font-bold">Rebirth</h3>
                   <p className="text-sm text-muted-foreground">
-                    Reinicie seu progresso e ganhe bônus permanentes
+                    Dobre seus ganhos permanentes (acumulativo)
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Total de Rebirths:</span>
-                  <span className="text-2xl font-bold text-[oklch(0.7_0.2_195)]">
-                    {totalRebirths}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Total Realizado</span>
+                  <span className="text-xl font-bold text-[oklch(0.7_0.2_195)]">{totalRebirths}</span>
+                </div>
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Próximo Bônus</span>
+                  <span className="text-xl font-bold text-[oklch(0.7_0.2_195)]">x2</span>
+                </div>
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Custo em Moedas</span>
+                  <span className={`text-sm font-bold ${gameState.coins >= rebirthCoinCost ? 'text-green-400' : 'text-red-400'}`}>
+                    {rebirthCoinCost.toLocaleString()}
                   </span>
                 </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Custo:</span>
-                  <span className="text-2xl font-bold text-[oklch(0.7_0.2_195)] font-[family-name:var(--font-mono)]">
-                    {rebirthCost.toLocaleString()}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Bônus (10% do Poder):</span>
-                  <span className="text-2xl font-bold text-[oklch(0.75_0.2_145)] font-[family-name:var(--font-mono)]">
-                    {Math.floor(
-                      gameState.pets.reduce((sum, pet) => sum + pet.multiplier, 0) * 0.1
-                    ).toLocaleString()}
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Pets Necessários</span>
+                  <span className={`text-sm font-bold ${gameState.pets.length >= rebirthPetRequirement ? 'text-green-400' : 'text-red-400'}`}>
+                    {gameState.pets.length} / {rebirthPetRequirement}
                   </span>
                 </div>
               </div>
 
               <button
                 onClick={handleRebirth}
-                disabled={gameState.coins < rebirthCost}
+                disabled={!canRebirth}
                 className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
-                  gameState.coins >= rebirthCost
-                    ? 'bg-[oklch(0.7_0.2_195)] text-background hover:brightness-110'
+                  canRebirth
+                    ? 'bg-[oklch(0.7_0.2_195)] text-background hover:brightness-110 shadow-[0_0_20px_oklch(0.7_0.2_195_/_0.5)]'
                     : 'bg-muted text-muted-foreground cursor-not-allowed'
                 }`}
               >
                 <RefreshCw className="w-5 h-5" />
-                FAZER REBIRTH
+                REALIZAR REBIRTH
               </button>
             </div>
           </motion.div>
@@ -163,56 +165,53 @@ export default function RebirthAscensionShop() {
                 <div>
                   <h3 className="text-xl font-bold">Ascensão</h3>
                   <p className="text-sm text-muted-foreground">
-                    Ascenda para um novo nível e ganhe bônus maiores
+                    Multiplicador massivo de 5x global
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Total de Ascensões:</span>
-                  <span className="text-2xl font-bold text-[oklch(0.75_0.2_145)]">
-                    {totalAscensions}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Total Realizado</span>
+                  <span className="text-xl font-bold text-[oklch(0.75_0.2_145)]">{totalAscensions}</span>
+                </div>
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Próximo Bônus</span>
+                  <span className="text-xl font-bold text-[oklch(0.75_0.2_145)]">x5</span>
+                </div>
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Custo em Moedas</span>
+                  <span className={`text-sm font-bold ${gameState.coins >= ascensionCoinCost ? 'text-green-400' : 'text-red-400'}`}>
+                    {ascensionCoinCost.toLocaleString()}
                   </span>
                 </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Custo:</span>
-                  <span className="text-2xl font-bold text-[oklch(0.75_0.2_145)] font-[family-name:var(--font-mono)]">
-                    {ascensionCost.toLocaleString()}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                  <span className="text-muted-foreground">Bônus (25% do Poder):</span>
-                  <span className="text-2xl font-bold text-[oklch(0.7_0.2_45)] font-[family-name:var(--font-mono)]">
-                    {Math.floor(
-                      gameState.pets.reduce((sum, pet) => sum + pet.multiplier, 0) * 0.25
-                    ).toLocaleString()}
+                <div className="p-3 bg-muted rounded-lg">
+                  <span className="text-xs text-muted-foreground block">Rebirths Necessários</span>
+                  <span className={`text-sm font-bold ${totalRebirths >= ascensionRebirthRequirement ? 'text-green-400' : 'text-red-400'}`}>
+                    {totalRebirths} / {ascensionRebirthRequirement}
                   </span>
                 </div>
               </div>
 
               <button
                 onClick={handleAscension}
-                disabled={gameState.coins < ascensionCost}
+                disabled={!canAscend}
                 className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${
-                  gameState.coins >= ascensionCost
-                    ? 'bg-[oklch(0.75_0.2_145)] text-background hover:brightness-110'
+                  canAscend
+                    ? 'bg-[oklch(0.75_0.2_145)] text-background hover:brightness-110 shadow-[0_0_20px_oklch(0.75_0.2_145_/_0.5)]'
                     : 'bg-muted text-muted-foreground cursor-not-allowed'
                 }`}
               >
                 <Crown className="w-5 h-5" />
-                FAZER ASCENSÃO
+                REALIZAR ASCENSÃO
               </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Info */}
       <div className="text-xs text-muted-foreground text-center p-3 bg-muted rounded-lg">
-        💡 Rebirth e Ascensão ganham bônus maiores conforme você progride
+        💡 Rebirth dobra seus ganhos mas reseta pets e moedas. Ascensão reseta rebirths mas dá 5x mais poder.
       </div>
     </div>
   );

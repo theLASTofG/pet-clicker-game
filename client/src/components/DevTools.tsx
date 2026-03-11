@@ -64,6 +64,22 @@ export default function DevTools() {
         >
           +100,000 Moedas
         </Button>
+        <Button
+          onClick={() => addTestCoins(1000000)}
+          variant="outline"
+          size="sm"
+          className="text-xs"
+        >
+          +1M Moedas
+        </Button>
+        <Button
+          onClick={() => addTestCoins(100000000)}
+          variant="outline"
+          size="sm"
+          className="text-xs"
+        >
+          +100M Moedas
+        </Button>
       </div>
 
       <p className="text-xs text-muted-foreground mt-2">

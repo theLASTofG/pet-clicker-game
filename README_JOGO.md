@@ -48,7 +48,9 @@ Quatro tipos de ovos com raridades crescentes:
 
 #### Sistema de Progresso
 - **Conquistas**: 3 marcos de progresso para desbloquear novos ovos
-- **Estatísticas**: Moedas, Poder/Clique, Total de Cliques, Número de Pets
+- **Estatísticas**: Moedas, Poder/Clique, Total de Cliques, Número de Pets, Rebirths e Ascensões
+- **Rebirth**: Reset de progresso (moedas, pets, upgrades) em troca de multiplicador 2x permanente. Requer 100k moedas e 10 pets.
+- **Ascensão**: Reset total (incluindo Rebirths) em troca de multiplicador 5x global. Requer 5M moedas e 5 Rebirths.
 - **Persistência**: Todo o progresso é salvo automaticamente no localStorage
 
 ### 🎨 Componentes Principais
@@ -156,14 +158,14 @@ client/
 
 ## 🎯 Próximas Funcionalidades (Sugestões)
 
-- [ ] Sistema de upgrades permanentes
-- [ ] Ganho passivo de moedas (idle)
-- [ ] Mais tipos de pets e ovos
-- [ ] Sistema de missões diárias
+- [x] Sistema de upgrades permanentes
+- [x] Ganho passivo de moedas (idle)
+- [x] Mais tipos de pets e ovos (20 classes de pets)
+- [x] Sistema de missões diárias
+- [x] Sistema de Rebirth e Ascensão (Prestige)
 - [ ] Leaderboard global
 - [ ] Efeitos sonoros e música
 - [ ] Animações de partículas mais elaboradas
-- [ ] Sistema de prestige/reset
 
 ## 📝 Notas de Desenvolvimento
 

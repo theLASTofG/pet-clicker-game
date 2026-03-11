@@ -4,6 +4,7 @@
 import { INITIAL_GAME_STATE } from '@/data/gameData';
 import { GameState, Pet, Mission } from '@/types/game';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface GameContextType {
   gameState: GameState;
@@ -19,6 +20,8 @@ interface GameContextType {
   completeMission: (missionId: string) => void;
   processIdleGains: () => void;
   setAutoClicker: (active: boolean) => void;
+  performRebirth: () => void;
+  performAscension: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -74,19 +77,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   // Calculate total click power based on pets and upgrades
   const calculateClickPower = () => {
-    if (gameState.pets.length === 0) return 1;
-    
-    const petMultiplier = gameState.pets.reduce(
-      (sum, pet) => sum + pet.multiplier,
-      0
-    );
+    const petMultiplier = gameState.pets.length === 0 
+      ? 1 
+      : gameState.pets.reduce((sum, pet) => sum + pet.multiplier, 0);
 
     const globalMultiplierUpgrade = gameState.upgrades.find(u => u.id === 'global-multiplier');
-    const globalMultiplier = globalMultiplierUpgrade 
+    const upgradeMultiplier = globalMultiplierUpgrade 
       ? 1 + (globalMultiplierUpgrade.level * 0.2)
       : 1;
 
-    return Math.floor(petMultiplier * globalMultiplier);
+    // Combine all multipliers
+    const totalMultiplier = upgradeMultiplier * 
+                           (gameState.rebirthMultiplier || 1) * 
+                           (gameState.ascensionMultiplier || 1);
+
+    return Math.floor(petMultiplier * totalMultiplier);
   };
 
   const addCoins = (amount: number) => {
@@ -203,6 +208,31 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const performRebirth = () => {
+    setGameState(prev => ({
+      ...INITIAL_GAME_STATE,
+      totalRebirths: (prev.totalRebirths || 0) + 1,
+      rebirthMultiplier: (prev.rebirthMultiplier || 1) * 2,
+      ascensionMultiplier: prev.ascensionMultiplier || 1,
+      totalAscensions: prev.totalAscensions || 0,
+      // Mantemos o total de cliques como estatística persistente
+      totalClicks: prev.totalClicks,
+    }));
+    toast.success('Rebirth realizado! Multiplicador de ganhos dobrado!');
+  };
+
+  const performAscension = () => {
+    setGameState(prev => ({
+      ...INITIAL_GAME_STATE,
+      totalAscensions: (prev.totalAscensions || 0) + 1,
+      ascensionMultiplier: (prev.ascensionMultiplier || 1) * 5,
+      rebirthMultiplier: 1, // Resetamos rebirth ao ascender para balancear
+      totalRebirths: 0,
+      totalClicks: prev.totalClicks,
+    }));
+    toast.success('Ascensão realizada! Poder massivo desbloqueado!');
+  };
+
   const resetGame = () => {
     setGameState(INITIAL_GAME_STATE);
     localStorage.removeItem(STORAGE_KEY);
@@ -224,6 +254,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         completeMission,
         processIdleGains,
         setAutoClicker,
+        performRebirth,
+        performAscension,
       }}
     >
       {children}

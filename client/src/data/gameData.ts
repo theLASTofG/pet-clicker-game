@@ -246,4 +246,6 @@ export const INITIAL_GAME_STATE = {
   ) as Record<PetClass, number>,
   totalRebirths: 0,
   totalAscensions: 0,
+  rebirthMultiplier: 1,
+  ascensionMultiplier: 1,
 };

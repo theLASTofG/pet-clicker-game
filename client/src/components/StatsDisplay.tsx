@@ -3,7 +3,7 @@
 
 import { useGame } from '@/contexts/GameContext';
 import { motion } from 'framer-motion';
-import { Coins, MousePointerClick, Zap, Package } from 'lucide-react';
+import { Coins, MousePointerClick, Zap, Package, RefreshCw, Crown } from 'lucide-react';
 
 export default function StatsDisplay() {
   const { gameState, calculateClickPower } = useGame();
@@ -34,10 +34,22 @@ export default function StatsDisplay() {
       value: gameState.pets.length.toString(),
       color: 'oklch(0.7 0.2 45)',
     },
+    {
+      icon: RefreshCw,
+      label: 'Rebirths',
+      value: `x${gameState.rebirthMultiplier || 1}`,
+      color: 'oklch(0.7 0.2 195)',
+    },
+    {
+      icon: Crown,
+      label: 'Ascensões',
+      value: `x${gameState.ascensionMultiplier || 1}`,
+      color: 'oklch(0.75 0.2 145)',
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.label}
