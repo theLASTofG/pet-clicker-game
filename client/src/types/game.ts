@@ -25,6 +25,14 @@ export type PetClass =
   | 'temporal'
   | 'dimensional';
 
+export interface PetAbility {
+  type: 'multi-click' | 'idle-boost' | 'critical-click';
+  triggerCount?: number; // Ex: a cada 10 cliques
+  multiplier?: number; // Ex: 1000x
+  chance?: number; // Ex: 5% de chance
+  description: string;
+}
+
 export interface Pet {
   id: string;
   name: string;
@@ -36,6 +44,7 @@ export interface Pet {
   acquiredAt: number; // Timestamp
   level: number; // Nível do pet (para ascensão)
   ascensionLevel: number; // Nível de ascensão
+  ability?: PetAbility; // Habilidade especial (para pets ultra raros)
 }
 
 export interface EggType {
@@ -54,6 +63,7 @@ export interface PetTemplate {
   multiplier: number;
   weight: number;
   dropChance: number; // Probabilidade de 0 a 1
+  ability?: PetAbility;
 }
 
 export interface Upgrade {

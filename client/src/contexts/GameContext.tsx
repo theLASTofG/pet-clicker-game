@@ -120,6 +120,40 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   };
 
   const incrementClicks = () => {
+    const currentClicks = gameState.totalClicks + 1;
+    let bonusMultiplier = 1;
+
+    // Verificar habilidades de pets (ex: a cada X cliques)
+    gameState.pets.forEach(pet => {
+      if (pet.ability?.type === 'multi-click' && pet.ability.triggerCount) {
+        if (currentClicks % pet.ability.triggerCount === 0) {
+          bonusMultiplier *= (pet.ability.multiplier || 1);
+          toast.success(`Habilidade de ${pet.name} ativada! Multiplicador de ${pet.ability.multiplier}x aplicado!`, {
+            duration: 1500,
+            position: 'top-center',
+          });
+        }
+      }
+    });
+
+    // Verificar habilidades de chance (ex: 5% de chance de crítico)
+    gameState.pets.forEach(pet => {
+      if (pet.ability?.type === 'critical-click' && pet.ability.chance) {
+        if (Math.random() < pet.ability.chance) {
+          bonusMultiplier *= (pet.ability.multiplier || 1);
+          toast.success(`CRÍTICO! ${pet.name} ativou ${pet.ability.multiplier}x!`, {
+            duration: 1000,
+            style: { background: 'oklch(0.7 0.2 45)', color: 'white' }
+          });
+        }
+      }
+    });
+
+    if (bonusMultiplier > 1) {
+      const power = calculateClickPower();
+      addCoins(power * (bonusMultiplier - 1)); // Adiciona o bônus extra
+    }
+
     setGameState(prev => ({
       ...prev,
       totalClicks: prev.totalClicks + 1,

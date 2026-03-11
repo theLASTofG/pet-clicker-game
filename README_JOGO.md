@@ -40,6 +40,20 @@ Quatro tipos de ovos com raridades crescentes:
    - Multiplicador: 15.0x - 30.0x
    - Desbloqueado com 15 pets
 
+5. **Novos Ovos Avançados**:
+   - **Ovo Mítico**: 500,000 moedas (25 pets)
+   - **Ovo do Vazio**: 2,000,000 moedas (40 pets)
+   - **Ovo Cósmico**: 10,000,000 moedas (60 pets)
+   - **Ovo Temporal**: 50,000,000 moedas (80 pets)
+   - **Ovo Ômega**: 250,000,000 moedas (100 pets)
+
+#### Sistema de Pets Secretos e Habilidades
+- **Pets Secretos**: Chance ultra baixa (<1%) de obter pets como "Deus do Vazio" ou "Nexus Supremo".
+- **Habilidades Passivas**: Pets secretos possuem habilidades únicas:
+  - **Multi-Click**: A cada X cliques, ganha um bônus massivo (ex: 1000x).
+  - **Critical Click**: Chance de cliques críticos absurdamente altos.
+- **Visual**: Pets com habilidades possuem uma descrição especial no inventário.
+
 #### Sistema de Pets
 - Cada pet possui um multiplicador único que aumenta seus ganhos por clique
 - Pets são organizados por raridade no inventário

@@ -103,6 +103,14 @@ export default function PetInventory() {
                     {pet.multiplier}x
                   </span>
                 </div>
+
+                {pet.ability && (
+                  <div className="mt-2 p-1.5 bg-black/40 rounded border border-[oklch(0.7_0.2_45_/_0.3)]">
+                    <p className="text-[10px] leading-tight text-orange-300 font-semibold italic">
+                      ✨ {pet.ability.description}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Scan lines */}

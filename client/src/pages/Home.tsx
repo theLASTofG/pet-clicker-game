@@ -49,6 +49,26 @@ export default function Home() {
       unlockEgg('legendary');
       toast.success('Novo ovo desbloqueado: Ovo Lendário!');
     }
+    if (petCount >= 25 && !gameState.unlockedEggs.includes('mythic')) {
+      unlockEgg('mythic');
+      toast.success('Novo ovo desbloqueado: Ovo Mítico!');
+    }
+    if (petCount >= 40 && !gameState.unlockedEggs.includes('void')) {
+      unlockEgg('void');
+      toast.success('Novo ovo desbloqueado: Ovo do Vazio!');
+    }
+    if (petCount >= 60 && !gameState.unlockedEggs.includes('cosmic')) {
+      unlockEgg('cosmic');
+      toast.success('Novo ovo desbloqueado: Ovo Cósmico!');
+    }
+    if (petCount >= 80 && !gameState.unlockedEggs.includes('temporal')) {
+      unlockEgg('temporal');
+      toast.success('Novo ovo desbloqueado: Ovo Temporal!');
+    }
+    if (petCount >= 100 && !gameState.unlockedEggs.includes('omega')) {
+      unlockEgg('omega');
+      toast.success('Novo ovo desbloqueado: Ovo Ômega!');
+    }
   };
 
   // Check unlocks whenever pets change
@@ -117,7 +137,12 @@ export default function Home() {
                     <p className="text-xs text-muted-foreground pt-2">
                       • 3 pets → Ovo Raro<br/>
                       • 8 pets → Ovo Épico<br/>
-                      • 15 pets → Ovo Lendário
+                      • 15 pets → Ovo Lendário<br/>
+                      • 25 pets → Ovo Mítico<br/>
+                      • 40 pets → Ovo do Vazio<br/>
+                      • 60 pets → Ovo Cósmico<br/>
+                      • 80 pets → Ovo Temporal<br/>
+                      • 100 pets → Ovo Ômega
                     </p>
                   </DialogDescription>
                 </DialogHeader>

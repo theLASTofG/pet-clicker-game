@@ -60,10 +60,50 @@ const legendaryPets: PetTemplate[] = [
   { name: 'Eterno Guardião', rarity: 'legendary', class: 'temporal', multiplier: 30.0, weight: 2.3, dropChance: 0.02 },
 ];
 
+// Novos Pets Ultra Raros com Habilidades (Secretos)
 const secretPets: PetTemplate[] = [
-  { name: '⚡ Nexus Supremo', rarity: 'secret', class: 'dimensional', multiplier: 50.0, weight: 3.0, dropChance: 0.01 },
-  { name: '✨ Entidade Cósmica', rarity: 'secret', class: 'dimensional', multiplier: 75.0, weight: 3.5, dropChance: 0.005 },
-  { name: '🌌 Deus do Vazio', rarity: 'secret', class: 'dimensional', multiplier: 100.0, weight: 4.0, dropChance: 0.001 },
+  { 
+    name: '⚡ Nexus Supremo', 
+    rarity: 'secret', 
+    class: 'dimensional', 
+    multiplier: 50.0, 
+    weight: 3.0, 
+    dropChance: 0.01,
+    ability: {
+      type: 'multi-click',
+      triggerCount: 10,
+      multiplier: 1000,
+      description: 'A cada 10 cliques, ganha 1000x o poder de clique atual!'
+    }
+  },
+  { 
+    name: '✨ Entidade Cósmica', 
+    rarity: 'secret', 
+    class: 'dimensional', 
+    multiplier: 75.0, 
+    weight: 3.5, 
+    dropChance: 0.005,
+    ability: {
+      type: 'critical-click',
+      chance: 0.05,
+      multiplier: 5000,
+      description: '5% de chance de um clique crítico de 5000x!'
+    }
+  },
+  { 
+    name: '🌌 Deus do Vazio', 
+    rarity: 'secret', 
+    class: 'dimensional', 
+    multiplier: 100.0, 
+    weight: 4.0, 
+    dropChance: 0.001,
+    ability: {
+      type: 'multi-click',
+      triggerCount: 5,
+      multiplier: 2000,
+      description: 'A cada 5 cliques, ganha 2000x o poder de clique atual!'
+    }
+  },
 ];
 
 // Egg types configuration
@@ -99,6 +139,47 @@ export const EGGS: EggType[] = [
     cost: 100000,
     image: '/images/egg-legendary.png',
     petPool: [...legendaryPets, ...secretPets],
+  },
+  // 5 Novos Ovos
+  {
+    id: 'mythic',
+    name: 'Ovo Mítico',
+    rarity: 'legendary',
+    cost: 500000,
+    image: '/images/egg-legendary.png', // Usando imagens existentes por enquanto
+    petPool: [...legendaryPets.slice(-2), ...secretPets],
+  },
+  {
+    id: 'void',
+    name: 'Ovo do Vazio',
+    rarity: 'secret',
+    cost: 2000000,
+    image: '/images/egg-epic.png',
+    petPool: [secretPets[2], secretPets[0]],
+  },
+  {
+    id: 'cosmic',
+    name: 'Ovo Cósmico',
+    rarity: 'secret',
+    cost: 10000000,
+    image: '/images/egg-rare.png',
+    petPool: [secretPets[1], secretPets[2]],
+  },
+  {
+    id: 'temporal',
+    name: 'Ovo Temporal',
+    rarity: 'secret',
+    cost: 50000000,
+    image: '/images/egg-common.png',
+    petPool: [...secretPets],
+  },
+  {
+    id: 'omega',
+    name: 'Ovo Ômega',
+    rarity: 'secret',
+    cost: 250000000,
+    image: '/images/egg-epic.png',
+    petPool: [...secretPets],
   },
 ];
 

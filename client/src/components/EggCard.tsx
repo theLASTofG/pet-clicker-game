@@ -73,6 +73,7 @@ export default function EggCard({ egg, isLocked = false }: EggCardProps) {
           acquiredAt: Date.now(),
           level: 1,
           ascensionLevel: 0,
+          ability: selectedPet.ability,
         };
 
         addPet(pet);
